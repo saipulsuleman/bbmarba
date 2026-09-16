@@ -1,0 +1,1240 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SPBU 74-962-29 | Sistem Operasional BBM</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+
+  <div class="app-layout">
+    
+    <!-- LEFT SIDEBAR NAVIGATION -->
+    <aside class="app-sidebar" id="appSidebar">
+      
+      <!-- User Profile Card -->
+      <div class="user-profile-card">
+        <div class="user-avatar" id="userAvatarBox">
+          <span id="userAvatarInitial">M</span>
+        </div>
+        <div class="user-meta">
+          <div class="user-name" id="userDisplayName">Petugas Kasir</div>
+          <div id="userRoleBadge" class="role-tag admin">KASIR / ADMIN</div>
+        </div>
+      </div>
+
+      <!-- Live WITA Clock -->
+      <div class="sidebar-clock-box" id="clockWita">
+        <div class="clock-label">
+          <span class="icon-glyph" style="width: 14px; height: 14px;">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2zm1 11h-4a1 1 0 0 1 0-2h3V7a1 1 0 0 1 2 0v5a1 1 0 0 1-1 1z"/></svg>
+          </span>
+          <span>Zona WITA</span>
+        </div>
+        <span class="clock-time" id="witaTime">--:--:-- WITA</span>
+      </div>
+
+      <!-- Navigation Groups -->
+      <div class="nav-group">
+        <div class="nav-group-title">Operasional BBM</div>
+        <button type="button" class="nav-item-btn nav-tab active" onclick="switchTab('inputTab')">
+          <span class="icon-glyph nav-icon">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M19 5h-1V4a2 2 0 0 0-2-2H8a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2v-3h1a2 2 0 0 0 2-2v-6a2 2 0 0 0-2-2zm-5 6H8V6h6v5zm5 4h-1v-4h1v4z"/></svg>
+          </span>
+          <span>Input Pengisian BBM</span>
+        </button>
+        <button type="button" class="nav-item-btn nav-tab" onclick="switchTab('transactionsTab')">
+          <span class="icon-glyph nav-icon">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M19 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2zm-2 10H7a1 1 0 0 1 0-2h10a1 1 0 0 1 0 2zm0-4H7a1 1 0 0 1 0-2h10a1 1 0 0 1 0 2zm0 8H7a1 1 0 0 1 0-2h6a1 1 0 0 1 0 2z"/></svg>
+          </span>
+          <span>Transaksi Hari Ini</span>
+          <span class="badge-count" id="pendingCountBadge">0</span>
+        </button>
+      </div>
+
+      <div class="nav-group godmode-only" id="tabNavSettlement">
+        <div class="nav-group-title">Finansial & Audit</div>
+        <button type="button" class="nav-item-btn nav-tab" onclick="switchTab('settlementTab')">
+          <span class="icon-glyph nav-icon">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M21 7.28V5a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-2.28A2 2 0 0 0 22 15V9a2 2 0 0 0-1-1.72zM20 15h-4a2 2 0 0 1 0-4h4v4z"/></svg>
+          </span>
+          <span>Rekonsiliasi 17:00</span>
+        </button>
+        <button type="button" class="nav-item-btn nav-tab" onclick="switchTab('reportsTab')">
+          <span class="icon-glyph nav-icon">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM9 17H7v-5h2v5zm4 0h-2v-9h2v9zm4 0h-2v-4h2v4z"/></svg>
+          </span>
+          <span>Laporan & Cetak</span>
+        </button>
+      </div>
+
+      <div class="nav-group godmode-only" id="tabNavSettings">
+        <div class="nav-group-title">Sistem</div>
+        <button type="button" class="nav-item-btn nav-tab" onclick="switchTab('settingsTab')">
+          <span class="icon-glyph nav-icon">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58a.49.49 0 0 0 .12-.61l-1.92-3.32a.49.49 0 0 0-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54A.48.48 0 0 0 14 2h-4c-.25 0-.46.18-.49.43l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.63 8.49c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.07.94l-2.03 1.58a.49.49 0 0 0-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h4c.24 0 .44-.17.49-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/></svg>
+          </span>
+          <span>Master Data & Webhook</span>
+        </button>
+      </div>
+
+      <!-- Sidebar Footer -->
+      <div class="sidebar-footer">
+        <div class="sidebar-brand-badge">
+          <span style="color: var(--accent-cyan);">SPBU 74-962-29</span>
+          <span style="color: var(--text-dim);">•</span>
+          <span>PT. MUHRAS USAHA ARBA</span>
+        </div>
+        <button type="button" class="btn-logout" onclick="handleLogout()" title="Keluar dari sistem">
+          <span class="icon-glyph" style="width: 15px; height: 15px;">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M16 13v-2H7V9h9V7l5 4-5 4zm3 6H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v3h-2V5H5v14h14v-3h2v3a2 2 0 0 1-2 2z"/></svg>
+          </span>
+          <span>Keluar dari Sistem</span>
+        </button>
+      </div>
+
+    </aside>
+
+    <!-- MAIN APP CANVAS -->
+    <main class="app-main">
+
+      <!-- Topbar Header -->
+      <header class="app-topbar">
+        <div class="topbar-left">
+          <button type="button" class="mobile-menu-toggle" onclick="toggleSidebar()" aria-label="Toggle Menu">
+            <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"/></svg>
+          </button>
+          <div class="topbar-brand">
+            <div class="brand-icon-box">
+              <span class="icon-glyph" style="width: 18px; height: 18px;">
+                <svg viewBox="0 0 24 24" fill="currentColor"><path d="M19 5h-1V4a2 2 0 0 0-2-2H8a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2v-3h1a2 2 0 0 0 2-2v-6a2 2 0 0 0-2-2zm-5 6H8V6h6v5zm5 4h-1v-4h1v4z"/></svg>
+              </span>
+            </div>
+            <h1>SPBU 74-962-29</h1>
+            <span class="badge-partner">ARBA GROUP</span>
+          </div>
+        </div>
+
+        <div class="topbar-right">
+          <div class="countdown-widget" id="settlementCountdownWidget" title="Hitung mundur menuju rekonsiliasi dan transfer bank pukul 17:00 WITA">
+            <span>⏳ Tempo 17:00:</span>
+            <span class="countdown-time" id="settlementCountdownText">--:--:--</span>
+          </div>
+          <div class="topbar-pill-info">
+            <span class="dot"></span>
+            <span>Sistem Aktif</span>
+          </div>
+          <div class="topbar-pill-info">
+            <span style="color: var(--text-muted);">Tarif:</span>
+            <span style="font-family: var(--font-mono); font-weight: 700; color: var(--accent-cyan);" id="dexlitePriceBadge">Rp 24.200 / Liter</span>
+          </div>
+        </div>
+      </header>
+
+      <!-- Content Canvas -->
+      <div class="content-canvas">
+
+        <!-- 3 HERO METRIC CARDS (REFERENCE STYLE) -->
+        <div class="hero-metrics-grid">
+          
+          <!-- Card 1: SOP Card (Featured) -->
+          <div class="hero-card featured">
+            <div>
+              <div class="hero-card-header">
+                <div class="hero-icon-badge indigo">
+                  <span class="icon-glyph" style="width: 22px; height: 22px;">
+                    <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2L1 21h22L12 2zm0 3.84L19.53 19H4.47L12 5.84zM11 10v4h2v-4h-2zm0 6v2h2v-2h-2z"/></svg>
+                  </span>
+                </div>
+                <span class="hero-tag-pill">SOP Pompa</span>
+              </div>
+              <div class="hero-card-title">SOP Penahanan Struk SPBU</div>
+              <div class="hero-card-desc">
+                Struk fisik dispenser BBM <strong>wajib ditahan</strong> kasir & difoto. Pelunasan transaksi harian ARBA Group dibayarkan pukul <strong>17:00 WITA</strong> via transfer bank.
+              </div>
+            </div>
+            <div class="hero-card-actions">
+              <button type="button" class="btn-secondary" style="padding: 6px 12px; font-size: 0.76rem;" onclick="switchTab('transactionsTab')">
+                Lihat Rekap Hari Ini
+              </button>
+            </div>
+          </div>
+
+          <!-- Card 2: Total Volume Dexlite -->
+          <div class="hero-card">
+            <div>
+              <div class="hero-card-header">
+                <div class="hero-icon-badge emerald">
+                  <span class="icon-glyph" style="width: 22px; height: 22px;">
+                    <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"/></svg>
+                  </span>
+                </div>
+                <span class="hero-trend-badge positive">
+                  <span>↗</span>
+                  <span>Operasional</span>
+                </span>
+              </div>
+              <div class="hero-metric-label">Total Volume Dexlite Hari Ini</div>
+              <div class="hero-metric-value" id="statTodayLiters">0.00 L</div>
+              <div class="hero-metric-tags">
+                <span class="hero-tag-pill"># ARBA Group</span>
+                <span class="hero-tag-pill"># SPBU 74-962-29</span>
+              </div>
+            </div>
+            <!-- Mini bar chart decorative -->
+            <div class="mini-chart-bars">
+              <div class="chart-bar" style="height: 18px;"></div>
+              <div class="chart-bar" style="height: 32px;"></div>
+              <div class="chart-bar" style="height: 24px;"></div>
+              <div class="chart-bar" style="height: 44px;"></div>
+              <div class="chart-bar" style="height: 38px;"></div>
+            </div>
+          </div>
+
+          <!-- Card 3: Tagihan Belum Dibayar -->
+          <div class="hero-card">
+            <div>
+              <div class="hero-card-header">
+                <div class="hero-icon-badge amber">
+                  <span class="icon-glyph" style="width: 22px; height: 22px;">
+                    <svg viewBox="0 0 24 24" fill="currentColor"><path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z"/></svg>
+                  </span>
+                </div>
+                <span class="hero-trend-badge pending">
+                  <span>⏳</span>
+                  <span>Tempo 17:00</span>
+                </span>
+              </div>
+              <div class="hero-metric-label">Belum Dibayar (17:00 WITA)</div>
+              <div class="hero-metric-value" style="color: var(--accent-amber);" id="statTodayUnpaidRp">Rp 0</div>
+              <div class="hero-metric-tags">
+                <span class="hero-tag-pill">Jatuh Tempo Hari Ini</span>
+              </div>
+            </div>
+            <!-- Mini bar chart decorative -->
+            <div class="mini-chart-bars">
+              <div class="chart-bar" style="height: 28px; background: linear-gradient(to top, var(--accent-amber), #fde047);"></div>
+              <div class="chart-bar" style="height: 40px; background: linear-gradient(to top, var(--accent-amber), #fde047);"></div>
+              <div class="chart-bar" style="height: 20px; background: linear-gradient(to top, var(--accent-amber), #fde047);"></div>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- ====================================================================
+             TAB 1: FORM INPUT PENGISIAN BBM (PRIMARY OPERATIONAL WORKSPACE)
+             ==================================================================== -->
+        <section id="inputTab" class="tab-pane active">
+          
+          <div class="dashboard-card">
+            
+            <div class="card-header-clean">
+              <div class="card-title-group">
+                <h2>
+                  <span class="icon-glyph" style="width: 20px; height: 20px; color: var(--accent-cyan);">
+                    <svg viewBox="0 0 24 24" fill="currentColor"><path d="M19 5h-1V4a2 2 0 0 0-2-2H8a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2v-3h1a2 2 0 0 0 2-2v-6a2 2 0 0 0-2-2zm-5 6H8V6h6v5zm5 4h-1v-4h1v4z"/></svg>
+                  </span>
+                  <span>Form Pengisian BBM Armada ARBA</span>
+                </h2>
+                <p>Input nominal rupiah pengisian, sistem otomatis menghitung liter Dexlite resmi SPBU</p>
+              </div>
+            </div>
+
+            <div class="card-body-clean">
+              <form id="refuelForm" onsubmit="handleTransactionSubmit(event)">
+                
+                <!-- SEKSI 1: IDENTIFIKASI ARMADA ARBA (BALANCED 2-COLUMN) -->
+                <div class="form-section">
+                  <div class="form-section-title">
+                    <span class="icon-glyph" style="width: 14px; height: 14px;">
+                      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M18.92 6.01C18.72 5.42 18.16 5 17.5 5h-11c-.66 0-1.22.42-1.42 1.01L3 12v8c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-1h12v1c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-8l-2.08-5.99zM6.5 16c-.83 0-1.5-.67-1.5-1.5S5.67 13 6.5 13s1.5.67 1.5 1.5S7.33 16 6.5 16zm11 0c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5zM5 11l1.5-4.5h11L19 11H5z"/></svg>
+                    </span>
+                    <span>1. Informasi Armada Distribusi</span>
+                  </div>
+
+                  <div class="form-grid-2col">
+                    
+                    <!-- Kolom Kiri: Nomor Plat Kendaraan -->
+                    <div class="form-group-clean">
+                      <label class="form-label-clean" for="plateInput">
+                        <span class="label-left">
+                          <span>Nomor Plat Kendaraan</span>
+                          <span class="badge-required">*</span>
+                        </span>
+                        <span class="badge-sub" id="vehicleDetectInfo">Pilih dari 30 armada terdaftar</span>
+                      </label>
+                      <input 
+                        type="text" 
+                        id="plateInput" 
+                        class="input-clean font-mono" 
+                        placeholder="Ketik plat (mis: DM 8324 AG / 8324)" 
+                        list="vehicleDatalist"
+                        required
+                        autocomplete="off"
+                        oninput="handlePlateChange()"
+                      >
+                      <datalist id="vehicleDatalist"></datalist>
+
+                      <!-- Quick Chips 5 Armada Terpopuler -->
+                      <div class="quick-chips-bar">
+                        <span class="quick-chips-label">
+                          <span class="icon-glyph" style="width: 12px; height: 12px; color: var(--accent-cyan);">
+                            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M7 2v11h3v9l7-12h-4l4-8H7z"/></svg>
+                          </span>
+                          Akses Cepat:
+                        </span>
+                        <button type="button" class="chip-pill" onclick="selectQuickVehicle('DM 8324 AG')">DM 8324 AG</button>
+                        <button type="button" class="chip-pill" onclick="selectQuickVehicle('DM 8204 AL')">DM 8204 AL</button>
+                        <button type="button" class="chip-pill" onclick="selectQuickVehicle('DM 8420 AD')">DM 8420 AD</button>
+                        <button type="button" class="chip-pill" onclick="selectQuickVehicle('DM 8260 AF')">DM 8260 AF</button>
+                        <button type="button" class="chip-pill" onclick="selectQuickVehicle('DM 8202 AJ')">DM 8202 AJ</button>
+                      </div>
+                    </div>
+
+                    <!-- Kolom Kanan: Kode Equipment & Tipe (Auto-filled) -->
+                    <div class="form-group-clean">
+                      <label class="form-label-clean" for="equipmentCodeInput">
+                        <span class="label-left">
+                          <span>Kode Equipment / Tipe</span>
+                        </span>
+                        <span class="badge-sub">Terisi otomatis dari master data</span>
+                      </label>
+                      <input 
+                        type="text" 
+                        id="equipmentCodeInput" 
+                        class="input-clean font-mono" 
+                        placeholder="Contoh: D221001 (TRUK DISTRIBUSI)" 
+                        readonly
+                      >
+                      <input type="hidden" id="vehicleTypeInput" value="TRUK DISTRIBUSI">
+
+                      <!-- Subtle Preview Card Balancing Column Height -->
+                      <div class="equipment-info-box" id="equipmentInfoBox">
+                        <span>Status Registrasi:</span>
+                        <span id="registrationStatusBadge" class="reg-status-badge waiting">Menunggu Input Plat</span>
+                      </div>
+                    </div>
+
+                  </div>
+                </div>
+
+                <!-- SEKSI 2: NOMINAL RUPIAH & KONVERSI DEXLITE (HERO SECTION) -->
+                <div class="form-section">
+                  <div class="form-section-title">
+                    <span class="icon-glyph" style="width: 14px; height: 14px;">
+                      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M11.8 10.9c-2.27-.59-3-1.2-3-2.15 0-1.09 1.01-1.85 2.7-1.85 1.78 0 2.44.85 2.5 2.1h2.21c-.07-1.72-1.12-3.3-3.21-3.81V3h-3v2.16c-1.94.42-3.5 1.68-3.5 3.61 0 2.31 1.91 3.46 4.7 4.13 2.5.6 3 1.48 3 2.41 0 .69-.49 1.79-2.7 1.79-2.06 0-2.87-.92-2.98-2.1h-2.2c.12 2.19 1.76 3.42 3.68 3.83V21h3v-2.15c1.95-.37 3.5-1.5 3.5-3.55 0-2.84-2.43-3.81-4.7-4.4z"/></svg>
+                    </span>
+                    <span>2. Transaksi & Volume Pengisian BBM</span>
+                  </div>
+
+                  <div class="form-group-clean">
+                    <label class="form-label-clean" for="totalRpInput">
+                      <span class="label-left">
+                        <span>Nominal Pengisian (Rupiah)</span>
+                        <span class="badge-required">*</span>
+                      </span>
+                      <span class="badge-sub">Input utama pengisian ARBA Group</span>
+                    </label>
+
+                    <!-- Input Nominal with Integrated Currency Prefix -->
+                    <div class="nominal-input-container">
+                      <span class="nominal-currency-prefix">Rp</span>
+                      <input 
+                        type="text" 
+                        inputmode="numeric" 
+                        id="totalRpInput" 
+                        class="input-clean hero-nominal" 
+                        placeholder="500.000" 
+                        required 
+                        autocomplete="off"
+                        oninput="handleNominalInput(this)"
+                      >
+                    </div>
+
+                    <!-- Preset Chips (Pills from Reference) -->
+                    <div class="preset-chips-grid">
+                      <span style="font-size: 0.76rem; color: var(--text-muted); margin-right: 4px; font-weight: 600;">Pilihan Cepat:</span>
+                      <button type="button" class="btn-preset-chip" data-amount="200000" onclick="setNominal(200000)">Rp 200.000</button>
+                      <button type="button" class="btn-preset-chip" data-amount="300000" onclick="setNominal(300000)">Rp 300.000</button>
+                      <button type="button" class="btn-preset-chip" data-amount="500000" onclick="setNominal(500000)">Rp 500.000</button>
+                      <button type="button" class="btn-preset-chip" data-amount="1000000" onclick="setNominal(1000000)">Rp 1.000.000</button>
+                      <button type="button" class="btn-preset-chip" data-amount="1500000" onclick="setNominal(1500000)">Rp 1.500.000</button>
+                      <button type="button" class="btn-preset-chip" data-amount="2000000" onclick="setNominal(2000000)">Rp 2.000.000</button>
+                    </div>
+
+                    <!-- Digital Volume Conversion Callout -->
+                    <div class="conversion-display-box">
+                      <div class="conversion-left">
+                        <div class="conversion-icon">
+                          <span class="icon-glyph" style="width: 20px; height: 20px;">
+                            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"/></svg>
+                          </span>
+                        </div>
+                        <div>
+                          <div class="conversion-info-label">Konversi Volume Otomatis</div>
+                          <div class="conversion-formula">(Nominal Rp ÷ Tarif Dexlite Resmi SPBU)</div>
+                        </div>
+                      </div>
+
+                      <div class="conversion-result-right">
+                        <span class="conversion-number" id="calculatedLitersText">0.00</span>
+                        <span class="conversion-unit">Liter Dexlite</span>
+                      </div>
+                    </div>
+
+                  </div>
+                </div>
+
+                <!-- SEKSI 3: DATA DISPENSER & PERSONIL (SPACIOUS 2x2 GRID) -->
+                <div class="form-section">
+                  <div class="form-section-title">
+                    <span class="icon-glyph" style="width: 14px; height: 14px;">
+                      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/></svg>
+                    </span>
+                    <span>3. Rincian Dispenser & Lapangan</span>
+                  </div>
+
+                  <div class="form-grid-2col" style="margin-bottom: 16px;">
+                    
+                    <!-- Row 1 - Col 1: Nomor Struk Dispenser -->
+                    <div class="form-group-clean">
+                      <label class="form-label-clean" for="receiptNoInput">
+                        <span class="label-left">
+                          <span>Nomor Struk Dispenser SPBU</span>
+                        </span>
+                        <span class="badge-sub">No seri fisik struk pompa</span>
+                      </label>
+                      <input 
+                        type="text" 
+                        id="receiptNoInput" 
+                        class="input-clean font-mono" 
+                        placeholder="Contoh: STR-98124"
+                      >
+                    </div>
+
+                    <!-- Row 1 - Col 2: Waktu Pengisian (WITA) -->
+                    <div class="form-group-clean">
+                      <label class="form-label-clean" for="fillingTimeInput">
+                        <span class="label-left">
+                          <span>Waktu Pengisian (WITA)</span>
+                        </span>
+                        <span class="badge-sub">Tercatat otomatis saat ini</span>
+                      </label>
+                      <input 
+                        type="text" 
+                        id="fillingTimeInput" 
+                        class="input-clean font-mono" 
+                        readonly
+                      >
+                    </div>
+
+                  </div>
+
+                  <div class="form-grid-2col">
+                    
+                    <!-- Row 2 - Col 1: Nama Sopir / Driver -->
+                    <div class="form-group-clean">
+                      <label class="form-label-clean" for="driverNameInput">
+                        <span class="label-left">
+                          <span>Nama Sopir / Driver</span>
+                        </span>
+                        <span class="badge-sub">Opsional</span>
+                      </label>
+                      <input 
+                        type="text" 
+                        id="driverNameInput" 
+                        class="input-clean" 
+                        placeholder="Nama sopir pembawa armada"
+                      >
+                    </div>
+
+                    <!-- Row 2 - Col 2: Catatan Khusus -->
+                    <div class="form-group-clean">
+                      <label class="form-label-clean" for="notesInput">
+                        <span class="label-left">
+                          <span>Catatan Khusus Lapangan</span>
+                        </span>
+                        <span class="badge-sub">Opsional</span>
+                      </label>
+                      <input 
+                        type="text" 
+                        id="notesInput" 
+                        class="input-clean" 
+                        placeholder="Kondisi pengisian / catatan pulau dispenser"
+                      >
+                    </div>
+
+                  </div>
+                </div>
+
+                <!-- SEKSI 4: UPLOAD FOTO STRUK FISIK (MINIMALIST DROPZONE) -->
+                <div class="form-section">
+                  <div class="form-section-title">
+                    <span class="icon-glyph" style="width: 14px; height: 14px;">
+                      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M9 2L7.17 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2h-3.17L15 2H9zm3 15c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5z"/></svg>
+                    </span>
+                    <span>4. Lampiran Struk Fisik Dispenser (Wajib Ditahan)</span>
+                  </div>
+
+                  <div class="upload-dropzone" onclick="document.getElementById('receiptFileInput').click()">
+                    <div class="upload-icon-circle">
+                      <span class="icon-glyph" style="width: 24px; height: 24px;">
+                        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M9 2L7.17 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2h-3.17L15 2H9zm3 15c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5z"/></svg>
+                      </span>
+                    </div>
+                    <div class="upload-main-text">Klik untuk Ambil Foto Struk / Unggah Gambar</div>
+                    <div class="upload-sub-text">Mendukung kamera HP langsung atau file JPG, PNG, WEBP (Kompresi Otomatis)</div>
+                  </div>
+
+                  <input 
+                    type="file" 
+                    id="receiptFileInput" 
+                    accept="image/*" 
+                    capture="environment" 
+                    style="display: none;" 
+                    onchange="handleReceiptFileSelect(event)"
+                  >
+
+                  <div class="upload-preview-container" id="receiptPreviewContainer">
+                    <img id="receiptPreviewImg" class="upload-preview-img" alt="Preview Struk">
+                    <button type="button" class="btn-delete-preview" onclick="clearReceiptPhoto()" title="Hapus foto">✕</button>
+                    <div id="receiptDriveLinkBadge" style="display: none; margin-top: 8px; padding: 6px 12px; background: rgba(5, 150, 105, 0.15); border: 1px solid rgba(5, 150, 105, 0.4); border-radius: var(--radius-sm); font-size: 0.78rem; color: #34d399; align-items: center; justify-content: space-between;">
+                      <span id="receiptDriveLinkText">☁️ Tersimpan di Google Drive: PT. Awet Sarana Sukses</span>
+                      <a id="receiptDriveLink" href="#" target="_blank" style="color: var(--accent-cyan); text-decoration: underline; font-weight: 600; margin-left: 8px;">Lihat di Drive ↗</a>
+                    </div>
+                  </div>
+
+                  <div class="compression-status-badge" id="compressionBadge" style="display: none;">
+                    <span class="icon-glyph" style="width: 14px; height: 14px;">
+                      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
+                    </span>
+                    <span id="compressionText">Foto terkompresi otomatis.</span>
+                  </div>
+
+                  <input type="hidden" id="receiptPhotoUrl">
+                </div>
+
+                <!-- SUBMIT ACTION -->
+                <div style="display: flex; justify-content: flex-end; padding-top: 10px;">
+                  <button type="submit" class="btn-primary" id="btnSubmitTx" style="min-width: 280px;">
+                    <span class="icon-glyph" style="width: 18px; height: 18px;">
+                      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M17 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V7l-4-4zm2 16H5V5h11.17L19 7.83V19zm-7-7c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3zM6 6h9v4H6z"/></svg>
+                    </span>
+                    <span>Simpan Pengisian BBM (Tempo)</span>
+                  </button>
+                </div>
+
+              </form>
+            </div>
+
+          </div>
+
+        </section>
+
+        <!-- ====================================================================
+             TAB 2: TRANSAKSI HARI INI (MODERN SAAS TABLE WORKSPACE)
+             ==================================================================== -->
+        <section id="transactionsTab" class="tab-pane">
+          
+          <div class="dashboard-card">
+            
+            <div class="card-header-clean">
+              <div class="card-title-group">
+                <h2>
+                  <span class="icon-glyph" style="width: 20px; height: 20px; color: var(--accent-cyan);">
+                    <svg viewBox="0 0 24 24" fill="currentColor"><path d="M19 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2zm-2 10H7a1 1 0 0 1 0-2h10a1 1 0 0 1 0 2zm0-4H7a1 1 0 0 1 0-2h10a1 1 0 0 1 0 2zm0 8H7a1 1 0 0 1 0-2h6a1 1 0 0 1 0 2z"/></svg>
+                  </span>
+                  <span>Daftar Transaksi BBM Hari Ini</span>
+                </h2>
+                <p>Seluruh pengisian armada ARBA Group tercatat otomatis dengan status verifikasi pelunasan bank</p>
+              </div>
+
+              <!-- Filter Controls -->
+              <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
+                <button type="button" class="btn-secondary" onclick="loadTransactions()">
+                  <span class="icon-glyph" style="width: 14px; height: 14px;">
+                    <svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.65 6.35A7.958 7.958 0 0 0 12 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08A5.99 5.99 0 0 1 12 18c-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"/></svg>
+                  </span>
+                  <span>Muat Ulang</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- Enhanced Multi-Filter & Search Toolbar (Office Hours UX) -->
+            <div class="table-toolbar-container">
+              <div class="table-search-group">
+                <span class="table-search-icon">
+                  <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
+                </span>
+                <input 
+                  type="text" 
+                  id="txSearchInput" 
+                  class="input-clean table-search-input font-mono" 
+                  placeholder="Cari Plat (DM...), Driver, No Struk..." 
+                  oninput="handleSearchFilterChange()"
+                >
+              </div>
+
+              <div class="table-filters-group">
+                <!-- Status Filter -->
+                <select id="filterStatus" class="input-clean" style="width: auto; padding: 7px 12px; font-size: 0.82rem;" onchange="handleSearchFilterChange()">
+                  <option value="">Semua Status Bayar</option>
+                  <option value="BELUM DIBAYAR" selected>⏳ Belum Dibayar</option>
+                  <option value="SUDAH DIBAYAR">✅ Sudah Dibayar</option>
+                  <option value="DIBATALKAN">🚫 Dibatalkan (Void)</option>
+                </select>
+
+                <!-- Armada Filter -->
+                <select id="filterArmada" class="input-clean" style="width: auto; padding: 7px 12px; font-size: 0.82rem;" onchange="handleSearchFilterChange()">
+                  <option value="">Semua Armada</option>
+                  <option value="REGISTERED">🚛 Terverifikasi ARBA</option>
+                  <option value="UNREGISTERED">⚠️ Armada Luar</option>
+                </select>
+
+                <button type="button" class="btn-secondary" style="font-size: 0.8rem; padding: 7px 12px;" onclick="resetTxFilters()">
+                  Reset Filter
+                </button>
+              </div>
+            </div>
+
+            <!-- Table Body -->
+            <div class="table-responsive">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>No Transaksi</th>
+                    <th>Waktu (WITA)</th>
+                    <th>Nomor Plat</th>
+                    <th>Kode Alat</th>
+                    <th>Nominal (Rp)</th>
+                    <th>Volume (L)</th>
+                    <th>Struk Fisik</th>
+                    <th>Status Pembayaran</th>
+                    <th>Admin</th>
+                    <th>Aksi</th>
+                  </tr>
+                </thead>
+                <tbody id="transactionTableBody">
+                  <tr>
+                    <td colspan="10" style="text-align: center; padding: 40px; color: var(--text-muted);">
+                      Memuat data transaksi...
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <!-- Table Summary Footer Elements (Preserving IDs) -->
+            <div style="padding: 16px 24px; border-top: 1px solid var(--border-subtle); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; font-size: 0.82rem; color: var(--text-secondary);">
+              <div>
+                Total Transaksi: <strong style="color: #fff;" id="statTodayCount">0 Transaksi</strong>
+              </div>
+              <div>
+                Terverifikasi Lunas: <strong style="color: var(--accent-emerald);" id="statTodayPaidRp">Rp 0</strong>
+              </div>
+            </div>
+
+          </div>
+
+        </section>
+
+        <!-- ====================================================================
+             TAB 3: REKONSILIASI 17:00 WITA (KHUSUS GODMODE / OWNER)
+             ==================================================================== -->
+        <section id="settlementTab" class="tab-pane">
+          
+          <div class="dashboard-card">
+            
+            <div class="card-header-clean" style="background: linear-gradient(135deg, rgba(245, 158, 11, 0.08), rgba(99, 102, 241, 0.04));">
+              <div class="card-title-group">
+                <h2 style="color: var(--accent-amber);">
+                  <span class="icon-glyph" style="width: 20px; height: 20px;">
+                    <svg viewBox="0 0 24 24" fill="currentColor"><path d="M21 7.28V5a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-2.28A2 2 0 0 0 22 15V9a2 2 0 0 0-1-1.72zM20 15h-4a2 2 0 0 1 0-4h4v4z"/></svg>
+                  </span>
+                  <span>Rekonsiliasi & Pelunasan Mutasi Bank (17:00 WITA)</span>
+                </h2>
+                <p>Cocokkan mutasi rekening bank dengan total transaksi pengisian BBM armada ARBA Group hari ini</p>
+              </div>
+
+              <button type="button" class="btn-secondary btn-wa" onclick="openWhatsAppSummaryModal()">
+                <span class="icon-glyph" style="width: 14px; height: 14px;">
+                  <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12c0 1.82.49 3.53 1.34 5L2 22l5.22-1.31C8.61 21.49 10.26 22 12 22c5.52 0 10-4.48 10-10S17.52 2 12 2zm0 18c-1.53 0-2.98-.44-4.22-1.19l-.3-.18-3.11.78.83-2.98-.2-.33A7.95 7.95 0 0 1 4 12c0-4.41 3.59-8 8-8s8 3.59 8 8-3.59 8-8 8z"/></svg>
+                </span>
+                <span>Format Laporan WA</span>
+              </button>
+            </div>
+
+            <div class="card-body-clean">
+              
+              <!-- Banner Saldo Kurang Bayar (Carry-Over Balance ARBA Group) -->
+              <div id="carryOverAlertBanner" class="carryover-banner" style="display: none;">
+                <span class="icon-glyph" style="width: 22px; height: 22px; color: var(--accent-rose);">
+                  <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2L1 21h22L12 2zm0 3.84L19.53 19H4.47L12 5.84zM11 10v4h2v-4h-2zm0 6v2h2v-2h-2z"/></svg>
+                </span>
+                <div style="flex: 1;">
+                  <strong>Saldo Kurang Bayar Sebelumnya (Carry-Over):</strong>
+                  <span id="carryOverAmountText" style="font-weight: 800; color: #f87171; font-family: var(--font-mono); margin-left: 6px;">Rp 0</span>
+                  <div style="font-size: 0.76rem; color: #94a3b8; margin-top: 2px;">
+                    Terdapat selisih kurang bayar dari pelunasan sebelumnya yang belum dikompensasi oleh ARBA Group.
+                  </div>
+                </div>
+              </div>
+
+              <div class="form-grid-2col">
+                
+                <!-- Kolom Kiri: Pilih Transaksi yang Ditransfer -->
+                <div>
+                  <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px;">
+                    <h3 style="font-size: 0.92rem; font-weight: 700; color: #fff;">1. Pilih Transaksi yang Ditransfer</h3>
+                    <button type="button" class="btn-secondary" style="font-size: 0.74rem; padding: 4px 10px;" onclick="toggleSelectAllSettlement()">
+                      Pilih Semua
+                    </button>
+                  </div>
+
+                  <div style="max-height: 420px; overflow-y: auto; border: 1px solid var(--border-card); border-radius: var(--radius-sm); padding: 8px; background: rgba(12, 18, 30, 0.7);" id="settlementTxList">
+                    <div style="text-align: center; padding: 20px; color: var(--text-muted);">
+                      Memuat transaksi belum dibayar...
+                    </div>
+                  </div>
+
+                  <div style="margin-top: 14px; padding: 14px; background: rgba(255,255,255,0.03); border: 1px solid var(--border-subtle); border-radius: var(--radius-sm); display: flex; justify-content: space-between; align-items: center;">
+                    <span style="font-size: 0.84rem; color: var(--text-secondary);">Total Tagihan Terpilih:</span>
+                    <span style="font-size: 1.3rem; font-weight: 800; font-family: var(--font-mono); color: var(--accent-amber);" id="selectedTotalAmountText">Rp 0</span>
+                  </div>
+                </div>
+
+                <!-- Kolom Kanan: Form Verifikasi Mutasi Bank & Catat Selisih -->
+                <div>
+                  <h3 style="font-size: 0.92rem; font-weight: 700; color: #fff; margin-bottom: 12px;">2. Verifikasi Mutasi Bank & Selisih</h3>
+
+                  <form id="settlementForm" onsubmit="handleSettlementSubmit(event)">
+                    <div class="form-group-clean" style="margin-bottom: 14px;">
+                      <label class="form-label-clean" for="transferAmountInput">
+                        <span class="label-left">
+                          <span>Nominal Transfer Masuk Bank (Rp)</span>
+                          <span class="badge-required">*</span>
+                        </span>
+                        <span class="badge-sub">Sesuai mutasi rekening</span>
+                      </label>
+                      <input 
+                        type="text" 
+                        inputmode="numeric" 
+                        id="transferAmountInput" 
+                        class="input-clean font-mono" 
+                        placeholder="0" 
+                        required
+                        autocomplete="off"
+                        style="font-size: 1.25rem; font-weight: 700; color: var(--accent-cyan);"
+                        oninput="handleTransferAmountInput(this)"
+                      >
+                    </div>
+
+                    <!-- Box Status Selisih -->
+                    <div style="padding: 14px; border-radius: var(--radius-sm); margin-bottom: 14px; background: rgba(12, 18, 30, 0.8); border: 1px solid var(--border-card);">
+                      <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <span style="font-size: 0.82rem; color: var(--text-secondary);">Status Selisih Mutasi:</span>
+                        <span id="varianceStatusBadge" class="badge-variance-match">KLOP / SESUAI (Rp 0)</span>
+                      </div>
+                      <div style="font-size: 0.78rem; color: var(--text-muted); margin-top: 6px;" id="varianceDiffNote">
+                        Nominal transfer sesuai 100% dengan total tagihan pengisian.
+                      </div>
+                    </div>
+
+                    <!-- Catatan Selisih (Wajib jika ada selisih) -->
+                    <div class="form-group-clean" id="varianceNotesGroup" style="margin-bottom: 14px;">
+                      <label class="form-label-clean" for="varianceNotesInput">
+                        <span>Catatan Selisih Transfer</span>
+                        <span class="badge-sub" style="color: var(--accent-amber);">Wajib jika ada selisih</span>
+                      </label>
+                      <input 
+                        type="text" 
+                        id="varianceNotesInput" 
+                        class="input-clean" 
+                        placeholder="Misal: Kurang bayar Rp 50.000 dibayarkan besok / Biaya transfer"
+                      >
+                    </div>
+
+                    <div class="form-grid-2col" style="margin-bottom: 14px;">
+                      <div class="form-group-clean">
+                        <label class="form-label-clean" for="bankNameInput">Nama Bank SPBU</label>
+                        <input type="text" id="bankNameInput" class="input-clean" placeholder="Contoh: BCA / BRI / Mandiri" value="BCA">
+                      </div>
+                      <div class="form-group-clean">
+                        <label class="form-label-clean" for="bankRefInput">Nomor Ref Mutasi</label>
+                        <input type="text" id="bankRefInput" class="input-clean font-mono" placeholder="No ref mutasi transfer">
+                      </div>
+                    </div>
+
+                    <!-- Upload Bukti Transfer -->
+                    <div class="form-group-clean" style="margin-bottom: 20px;">
+                      <label class="form-label-clean">Bukti Struk Transfer Bank (Opsional)</label>
+                      <input type="file" id="transferProofFileInput" accept="image/*" class="input-clean" onchange="handleTransferProofSelect(event)">
+                      <input type="hidden" id="transferProofUrl">
+                    </div>
+
+                    <button type="submit" class="btn-success" style="width: 100%;" id="btnSubmitSettlement">
+                      <span class="icon-glyph" style="width: 16px; height: 16px;">
+                        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
+                      </span>
+                      <span>Verifikasi & Selesaikan Pelunasan (LUNAS)</span>
+                    </button>
+                  </form>
+                </div>
+
+              </div>
+
+            </div>
+
+          </div>
+
+          <!-- Riwayat Settlement Sebelumnya -->
+          <div class="dashboard-card">
+            <div class="card-header-clean">
+              <div class="card-title-group">
+                <h2>
+                  <span class="icon-glyph" style="width: 18px; height: 18px; color: var(--accent-cyan);">
+                    <svg viewBox="0 0 24 24" fill="currentColor"><path d="M13 3a9 9 0 0 0-9 9H1l3.89 3.89.07.14L9 12H6c0-3.87 3.13-7 7-7s7 3.13 7 7-3.13 7-7 7c-1.93 0-3.68-.79-4.94-2.06l-1.42 1.42A8.954 8.954 0 0 0 13 21a9 9 0 0 0 0-18zm-1 5v5l4.28 2.54.72-1.21-3.5-2.08V8H12z"/></svg>
+                  </span>
+                  <span>Riwayat Pelunasan Batch Harian</span>
+                </h2>
+              </div>
+            </div>
+
+            <div class="table-responsive">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>No Settlement</th>
+                    <th>Tanggal</th>
+                    <th>Total Tagihan</th>
+                    <th>Transfer Masuk</th>
+                    <th>Selisih (Rp)</th>
+                    <th>Bank / Ref</th>
+                    <th>Catatan</th>
+                    <th>Diverifikasi Oleh</th>
+                  </tr>
+                </thead>
+                <tbody id="settlementHistoryTableBody">
+                  <tr><td colspan="8" style="text-align: center; padding: 24px; color: var(--text-muted);">Belum ada riwayat pelunasan.</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+        </section>
+
+        <!-- ====================================================================
+             TAB 4: LAPORAN & CETAK
+             ==================================================================== -->
+        <section id="reportsTab" class="tab-pane">
+          
+          <div class="dashboard-card">
+            <div class="card-header-clean">
+              <div class="card-title-group">
+                <h2>
+                  <span class="icon-glyph" style="width: 20px; height: 20px; color: var(--accent-cyan);">
+                    <svg viewBox="0 0 24 24" fill="currentColor"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM9 17H7v-5h2v5zm4 0h-2v-9h2v9zm4 0h-2v-4h2v4z"/></svg>
+                  </span>
+                  <span>Laporan Pembelian BBM ARBA Group</span>
+                </h2>
+                <p>Rekapitulasi volume liter Dexlite dan nominal tagihan per periode transaksi</p>
+              </div>
+
+              <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                <button type="button" class="btn-primary" style="background: #059669; border-color: #047857;" onclick="exportToExcel()">
+                  <span class="icon-glyph" style="width: 14px; height: 14px;">
+                    <svg viewBox="0 0 24 24" fill="currentColor"><path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/></svg>
+                  </span>
+                  <span>Unduh Excel (.xlsx)</span>
+                </button>
+                <button type="button" class="btn-secondary" onclick="exportToCSV()">
+                  <span class="icon-glyph" style="width: 14px; height: 14px;">
+                    <svg viewBox="0 0 24 24" fill="currentColor"><path d="M19.35 10.04C18.67 6.59 15.64 4 12 4 9.11 4 6.6 5.64 5.35 8.04 2.34 8.36 0 10.91 0 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.65-4.96zM17 13l-5 5-5-5h3V9h4v4h3z"/></svg>
+                  </span>
+                  <span>Unduh CSV</span>
+                </button>
+                <button type="button" class="btn-primary" onclick="printReportInvoice()">
+                  <span class="icon-glyph" style="width: 14px; height: 14px;">
+                    <svg viewBox="0 0 24 24" fill="currentColor"><path d="M19 8H5c-1.66 0-3 1.34-3 3v6h4v4h12v-4h4v-6c0-1.66-1.34-3-3-3zm-3 11H8v-5h8v5zm3-7c-.55 0-1-.45-1-1s.45-1 1-1 1 .45 1 1-.45 1-1 1zm-1-9H6v4h12V3z"/></svg>
+                  </span>
+                  <span>Cetak Laporan / Invoice</span>
+                </button>
+              </div>
+            </div>
+
+            <div class="card-body-clean">
+              <div class="form-grid-2col" style="margin-bottom: 20px;">
+                <div class="form-group-clean">
+                  <label class="form-label-clean" for="reportDateFilter">Filter Tanggal Pengisian</label>
+                  <input type="date" id="reportDateFilter" class="input-clean" onchange="loadReportData()">
+                </div>
+                <div class="form-group-clean">
+                  <label class="form-label-clean" for="reportPlateFilter">Filter Nomor Plat Kendaraan</label>
+                  <input type="text" id="reportPlateFilter" class="input-clean font-mono" placeholder="Ketik plat armada" oninput="loadReportData()">
+                </div>
+              </div>
+
+              <div class="table-responsive">
+                <table class="data-table">
+                  <thead>
+                    <tr>
+                      <th>No Transaksi</th>
+                      <th>Waktu Pengisian</th>
+                      <th>No Plat</th>
+                      <th>Kode Alat</th>
+                      <th>Nominal (Rp)</th>
+                      <th>Liter Dexlite</th>
+                      <th>Status</th>
+                      <th>No Struk</th>
+                      <th>Foto Struk</th>
+                    </tr>
+                  </thead>
+                  <tbody id="reportTableBody">
+                    <tr><td colspan="9" style="text-align: center; padding: 24px; color: var(--text-muted);">Memuat laporan...</td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+        </section>
+
+        <!-- ====================================================================
+             TAB 5: MASTER DATA & WEBHOOK (KHUSUS GODMODE)
+             ==================================================================== -->
+        <section id="settingsTab" class="tab-pane">
+          
+          <!-- Webhook Settings -->
+          <div class="dashboard-card">
+            <div class="card-header-clean">
+              <div class="card-title-group">
+                <h2>
+                  <span class="icon-glyph" style="width: 20px; height: 20px; color: var(--accent-cyan);">
+                    <svg viewBox="0 0 24 24" fill="currentColor"><path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58a.49.49 0 0 0 .12-.61l-1.92-3.32a.49.49 0 0 0-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54A.48.48 0 0 0 14 2h-4c-.25 0-.46.18-.49.43l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.63 8.49c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.07.94l-2.03 1.58a.49.49 0 0 0-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h4c.24 0 .44-.17.49-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/></svg>
+                  </span>
+                  <span>Integrasi Google Spreadsheet (Live Webhook)</span>
+                </h2>
+                <p>Kirim otomatis setiap pengisian BBM dan pelunasan bank ke Google Sheet Manajemen SPBU & ARBA GROUP</p>
+              </div>
+            </div>
+
+            <div class="card-body-clean">
+              <div class="form-group-clean" style="margin-bottom: 16px;">
+                <label class="form-label-clean" for="webhookUrlInput">
+                  <span>Google Apps Script Web App URL</span>
+                  <span class="badge-sub">Berakhiran /exec</span>
+                </label>
+                <input 
+                  type="url" 
+                  id="webhookUrlInput" 
+                  class="input-clean font-mono" 
+                  placeholder="https://script.google.com/macros/s/.../exec"
+                >
+              </div>
+
+              <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                <button type="button" class="btn-primary" onclick="saveWebhookUrl()">
+                  Simpan URL Webhook
+                </button>
+                <button type="button" class="btn-secondary" onclick="testWebhookUrl()">
+                  Uji Koneksi Webhook
+                </button>
+                <button type="button" class="btn-secondary" onclick="resyncAllToSheets()">
+                  Sinkronkan Ulang Semua Data
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Master Harga Dexlite -->
+          <div class="dashboard-card">
+            <div class="card-header-clean">
+              <div class="card-title-group">
+                <h2>
+                  <span class="icon-glyph" style="width: 20px; height: 20px; color: var(--accent-cyan);">
+                    <svg viewBox="0 0 24 24" fill="currentColor"><path d="M19 5h-1V4a2 2 0 0 0-2-2H8a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2v-3h1a2 2 0 0 0 2-2v-6a2 2 0 0 0-2-2zm-5 6H8V6h6v5zm5 4h-1v-4h1v4z"/></svg>
+                  </span>
+                  <span>Master Tarif Dexlite Resmi SPBU</span>
+                </h2>
+                <p>Ubah tarif dasar per liter jika terdapat penyesuaian harga resmi dari Pertamina</p>
+              </div>
+            </div>
+
+            <div class="card-body-clean">
+              <div style="display: flex; gap: 14px; align-items: flex-end; max-width: 500px;">
+                <div class="form-group-clean" style="flex: 1;">
+                  <label class="form-label-clean" for="settingFuelPriceInput">Harga Dexlite per Liter (Rp)</label>
+                  <input type="text" inputmode="numeric" id="settingFuelPriceInput" class="input-clean font-mono" value="24.200" autocomplete="off" style="font-size: 1.25rem; font-weight: 700; color: var(--accent-cyan);" oninput="handleFuelPriceInput(this)">
+                </div>
+                <button type="button" class="btn-primary" onclick="saveFuelPrice()">
+                  Perbarui Tarif
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Master 30 Armada ARBA Group -->
+          <div class="dashboard-card">
+            <div class="card-header-clean">
+              <div class="card-title-group">
+                <h2>
+                  <span class="icon-glyph" style="width: 20px; height: 20px; color: var(--accent-cyan);">
+                    <svg viewBox="0 0 24 24" fill="currentColor"><path d="M18.92 6.01C18.72 5.42 18.16 5 17.5 5h-11c-.66 0-1.22.42-1.42 1.01L3 12v8c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-1h12v1c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-8l-2.08-5.99zM6.5 16c-.83 0-1.5-.67-1.5-1.5S5.67 13 6.5 13s1.5.67 1.5 1.5S7.33 16 6.5 16zm11 0c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5zM5 11l1.5-4.5h11L19 11H5z"/></svg>
+                  </span>
+                  <span>Master Armada ARBA Group</span>
+                </h2>
+                <p>30 armada distribusi terdaftar resmi sesuai dokumen perjanjian kerja sama SPBU</p>
+              </div>
+
+              <button type="button" class="btn-secondary" onclick="openAddVehicleModal()">
+                + Tambah Armada Baru
+              </button>
+            </div>
+
+            <div class="table-responsive">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>No</th>
+                    <th>Nomor Plat</th>
+                    <th>Kode Equipment</th>
+                    <th>Jenis Armada</th>
+                    <th>Keterangan</th>
+                    <th>Status</th>
+                  </tr>
+                </thead>
+                <tbody id="vehicleMasterTableBody">
+                  <tr><td colspan="6" style="text-align: center; padding: 24px; color: var(--text-muted);">Memuat armada...</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+        </section>
+
+      </div>
+
+    </main>
+
+  </div>
+
+  <!-- ====================================================================
+       MODALS SYSTEM
+       ==================================================================== -->
+
+  <!-- MODAL: PREVIEW FOTO STRUK -->
+  <div class="modal-overlay" id="photoModal" onclick="closePhotoModal(event)">
+    <div class="modal-container" style="max-width: 520px;" onclick="event.stopPropagation()">
+      <div class="modal-header">
+        <h3 class="modal-title" id="photoModalTitle">Foto Struk BBM Pompa</h3>
+        <button type="button" class="modal-close" onclick="closePhotoModal()">✕</button>
+      </div>
+      <div class="modal-body" style="text-align: center; padding: 16px;">
+        <img id="modalPreviewImg" src="" alt="Foto Struk" style="max-width: 100%; max-height: 70vh; border-radius: var(--radius-sm); border: 1px solid var(--border-card);">
+      </div>
+      <div class="modal-footer" style="display: flex; justify-content: space-between; align-items: center;">
+        <a id="modalDriveLink" href="#" target="_blank" class="btn-secondary" style="display: none; text-decoration: none; font-size: 0.82rem; align-items: center; gap: 6px;">
+          <span>📂 Buka di Google Drive</span>
+        </a>
+        <button type="button" class="btn-secondary" onclick="closePhotoModal()">Tutup</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: TAMBAH KENDARAAN -->
+  <div class="modal-overlay" id="addVehicleModal">
+    <div class="modal-container" style="max-width: 480px;">
+      <div class="modal-header">
+        <h3 class="modal-title">Tambah Armada Baru</h3>
+        <button type="button" class="modal-close" onclick="closeAddVehicleModal()">✕</button>
+      </div>
+      <form onsubmit="handleAddVehicleSubmit(event)">
+        <div class="modal-body">
+          <div class="form-group-clean" style="margin-bottom: 14px;">
+            <label class="form-label-clean">Nomor Plat (Contoh: DM 8999 AA) *</label>
+            <input type="text" id="newVehiclePlate" class="input-clean font-mono" required placeholder="DM xxxx xx">
+          </div>
+          <div class="form-group-clean" style="margin-bottom: 14px;">
+            <label class="form-label-clean">Kode Equipment</label>
+            <input type="text" id="newVehicleCode" class="input-clean font-mono" placeholder="Misal: D221026">
+          </div>
+          <div class="form-group-clean" style="margin-bottom: 14px;">
+            <label class="form-label-clean">Jenis Kendaraan</label>
+            <select id="newVehicleType" class="input-clean">
+              <option value="TRUK DISTRIBUSI">TRUK DISTRIBUSI</option>
+              <option value="MOBIL OPR">MOBIL OPERASIONAL</option>
+              <option value="MOTOR OPR">MOTOR OPERASIONAL</option>
+            </select>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn-secondary" onclick="closeAddVehicleModal()">Batal</button>
+          <button type="submit" class="btn-primary">Simpan Armada</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL: FORMAT RINGKASAN WHATSAPP (EXECUTIVE REVIEW) -->
+  <div class="modal-overlay" id="waModal" onclick="closeWaModal(event)">
+    <div class="modal-container" style="max-width: 600px;" onclick="event.stopPropagation()">
+      <div class="modal-header">
+        <h3 class="modal-title">Format Ringkasan WhatsApp (Laporan 17:00 WITA)</h3>
+        <button type="button" class="modal-close" onclick="closeWaModal()">✕</button>
+      </div>
+      <div class="modal-body">
+        <p style="font-size: 0.82rem; color: var(--text-secondary); margin-bottom: 12px;">
+          Salin teks ringkasan ini untuk dikirimkan langsung ke grup WhatsApp Tim Keuangan ARBA Group dan Owner SPBU:
+        </p>
+        <textarea id="waSummaryTextarea" class="input-clean font-mono" style="height: 280px; font-size: 0.82rem; line-height: 1.6; resize: vertical;" readonly></textarea>
+      </div>
+      <div class="modal-footer" style="display: flex; justify-content: space-between; align-items: center;">
+        <button type="button" class="btn-secondary" onclick="closeWaModal()">Tutup</button>
+        <div style="display: flex; gap: 8px;">
+          <button type="button" class="btn-primary" onclick="copyWaSummaryText()">Salin Teks</button>
+          <button type="button" class="btn-success btn-wa" onclick="openDirectWhatsApp()">Buka WhatsApp</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL KONFIRMASI ARMADA TIDAK TERDAFTAR (OFFICE HOURS & CEO RISK CONTROL) -->
+  <div class="modal-overlay" id="unregisteredConfirmModal" onclick="closeUnregisteredModal(event)">
+    <div class="modal-container" style="max-width: 480px;" onclick="event.stopPropagation()">
+      <div class="modal-header" style="border-bottom: 1px solid rgba(245, 158, 11, 0.2);">
+        <h3 class="modal-title" style="color: #fbbf24; display: flex; align-items: center; gap: 8px;">
+          <span>⚠️</span>
+          <span>Konfirmasi Armada Luar / Non-Terdaftar</span>
+        </h3>
+        <button type="button" class="modal-close" onclick="closeUnregisteredModal()">✕</button>
+      </div>
+      <div class="modal-body">
+        <div style="background: rgba(245, 158, 11, 0.08); border: 1px solid rgba(245, 158, 11, 0.25); border-radius: var(--radius-sm); padding: 14px; margin-bottom: 14px;">
+          <div style="font-size: 0.88rem; font-weight: 700; color: #fbbf24; margin-bottom: 6px;">
+            Plat <span id="confirmModalPlate" style="font-family: var(--font-mono); color: #fff;">-</span> Tidak Terdaftar di PT. ASS Marisa!
+          </div>
+          <p style="font-size: 0.8rem; color: #cbd5e1; line-height: 1.5; margin: 0;">
+            Kendaraan ini <strong>bukan</strong> salah satu dari 30 armada resmi ARBA Group. Jika dicatat sebagai tempo, tagihan berisiko ditolak saat rekonsiliasi pukul 17:00 WITA.
+          </p>
+        </div>
+        <p style="font-size: 0.82rem; color: var(--text-secondary); margin: 0;">
+          Pastikan pengisian ini telah disetujui atau merupakan unit operasional khusus sebelum melanjutkan penyimpanan transaksi.
+        </p>
+      </div>
+      <div class="modal-footer" style="display: flex; justify-content: flex-end; gap: 10px;">
+        <button type="button" class="btn-secondary" onclick="closeUnregisteredModal()">Periksa Kembali (Batal)</button>
+        <button type="button" class="btn-primary" style="background: #f59e0b; border-color: #d97706; color: #0f172a; font-weight: 700;" onclick="confirmSaveUnregisteredTx()">
+          Tetap Simpan Transaksi
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL DETAIL TRANSAKSI (OFFICE HOURS & CEO AUDIT) -->
+  <div class="modal-overlay" id="txDetailModal" onclick="closeTxDetailModal(event)">
+    <div class="modal-container" style="max-width: 600px;" onclick="event.stopPropagation()">
+      <div class="modal-header">
+        <h3 class="modal-title" style="display: flex; align-items: center; gap: 8px;">
+          <span style="color: var(--accent-cyan);">📋</span>
+          <span>Detail Transaksi Pengisian BBM</span>
+        </h3>
+        <button type="button" class="modal-close" onclick="closeTxDetailModal()">✕</button>
+      </div>
+      <div class="modal-body" id="txDetailContent">
+        <!-- Rendered dynamically -->
+      </div>
+      <div class="modal-footer" id="txDetailFooter" style="display: flex; justify-content: space-between; align-items: center;">
+        <!-- Action buttons rendered dynamically -->
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL VOID / PEMBATALAN TRANSAKSI (WAJIB OTORISASI GODMODE) -->
+  <div class="modal-overlay" id="txVoidModal" onclick="closeVoidModal(event)">
+    <div class="modal-container" style="max-width: 500px;" onclick="event.stopPropagation()">
+      <div class="modal-header" style="border-bottom: 1px solid rgba(244, 63, 94, 0.3);">
+        <h3 class="modal-title" style="color: #f43f5e; display: flex; align-items: center; gap: 8px;">
+          <span>🚫</span>
+          <span>Batalkan Transaksi (VOID)</span>
+        </h3>
+        <button type="button" class="modal-close" onclick="closeVoidModal()">✕</button>
+      </div>
+      <form onsubmit="handleConfirmVoidSubmit(event)">
+        <div class="modal-body">
+          <div class="tx-void-banner">
+            <strong>⚠️ Perhatian: Otorisasi Godmode / Owner Diperlukan!</strong><br>
+            Transaksi yang dibatalkan akan ditandai <code>DIBATALKAN</code> dan nominal tagihannya dikeluarkan dari tagihan tempo harian. Tindakan ini tercatat dalam audit log.
+          </div>
+          <div style="margin-bottom: 14px; font-size: 0.86rem; line-height: 1.6;">
+            No Transaksi: <strong id="voidModalTxNo" class="font-mono" style="color: #fff;">-</strong><br>
+            Plat Armada: <strong id="voidModalPlate" class="font-mono" style="color: var(--accent-cyan);">-</strong><br>
+            Nominal Tagihan: <strong id="voidModalAmount" class="font-mono" style="color: var(--accent-amber);">-</strong>
+          </div>
+          <div class="form-group-clean">
+            <label class="form-label-clean" for="voidReasonInput">
+              <span class="label-left">
+                <span>Alasan Pembatalan Transaksi</span>
+                <span class="badge-required">*</span>
+              </span>
+              <span class="badge-sub">Wajib diisi</span>
+            </label>
+            <textarea 
+              id="voidReasonInput" 
+              class="input-clean" 
+              style="height: 90px; resize: none; font-size: 0.84rem;" 
+              required 
+              placeholder="Contoh: Salah ketik nominal oleh kasir, seharusnya Rp 200.000 bukan Rp 1.000"
+            ></textarea>
+          </div>
+        </div>
+        <div class="modal-footer" style="display: flex; justify-content: flex-end; gap: 10px;">
+          <button type="button" class="btn-secondary" onclick="closeVoidModal()">Batal</button>
+          <button type="submit" class="btn-primary" style="background: #e11d48; border-color: #be123c; color: #fff; font-weight: 700;" id="btnSubmitVoid">
+            Konfirmasi Batalkan (VOID)
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL CETAK STRUK THERMAL POS (58mm/80mm) TANPA TANDA TANGAN -->
+  <div class="modal-overlay" id="thermalReceiptModal" onclick="closeThermalModal(event)">
+    <div class="modal-container" style="max-width: 440px;" onclick="event.stopPropagation()">
+      <div class="modal-header">
+        <h3 class="modal-title">Slip Pengisian BBM (Thermal POS)</h3>
+        <button type="button" class="modal-close" onclick="closeThermalModal()">✕</button>
+      </div>
+      <div class="modal-body" style="background: #0f172a; padding: 20px; display: flex; justify-content: center;">
+        <div id="thermalPrintTarget" class="thermal-receipt-wrapper">
+          <!-- Rendered dynamically without signature line -->
+        </div>
+      </div>
+      <div class="modal-footer" style="display: flex; justify-content: space-between; align-items: center;">
+        <button type="button" class="btn-secondary" onclick="closeThermalModal()">Tutup</button>
+        <button type="button" class="btn-primary" onclick="printThermalReceipt()">
+          🖨️ Cetak ke Printer Kasir
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Container Dokumen Cetak Laporan / Invoice A4 -->
+  <div id="reportPrintArea" class="report-printable-area"></div>
+
+  <!-- Toast Container -->
+  <div class="toast-container" id="toastContainer"></div>
+
+  <!-- Helper for Mobile Sidebar Toggle -->
+  <script>
+    function toggleSidebar() {
+      const sb = document.getElementById('appSidebar');
+      if (sb) sb.classList.toggle('open');
+    }
+  </script>
+
+  <!-- Application Logic Scripts -->
+  <script src="/js/auth.js"></script>
+  <script src="/js/app.js"></script>
+</body>
+</html>

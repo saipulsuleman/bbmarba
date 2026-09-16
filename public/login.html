@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login - SPBU 74-962-29 | Sistem Operasional BBM</title>
+  <link rel="stylesheet" href="/css/style.css">
+  <style>
+    body {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      padding: 24px;
+      background-color: var(--bg-app);
+    }
+    .login-box {
+      max-width: 440px;
+      width: 100%;
+      background: var(--bg-card);
+      border: 1px solid var(--border-card);
+      border-radius: var(--radius-xl);
+      padding: 38px 32px;
+      box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.7);
+    }
+    .login-brand {
+      text-align: center;
+      margin-bottom: 28px;
+    }
+    .login-logo {
+      width: 52px;
+      height: 52px;
+      margin: 0 auto 16px auto;
+      border-radius: var(--radius-md);
+      background: rgba(99, 102, 241, 0.15);
+      border: 1px solid rgba(99, 102, 241, 0.3);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--primary);
+    }
+    .login-brand h2 {
+      font-size: 1.35rem;
+      font-weight: 800;
+      color: #fff;
+      letter-spacing: -0.02em;
+    }
+    .login-brand p {
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+      margin-top: 5px;
+    }
+    .password-wrapper {
+      position: relative;
+    }
+    .password-toggle {
+      position: absolute;
+      right: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: none;
+      border: none;
+      color: var(--text-muted);
+      cursor: pointer;
+      font-size: 13px;
+    }
+    .password-toggle:hover {
+      color: #fff;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="login-box">
+    <div class="login-brand">
+      <div class="login-logo">
+        <span class="icon-glyph" style="width: 26px; height: 26px;">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M19 5h-1V4a2 2 0 0 0-2-2H8a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2v-3h1a2 2 0 0 0 2-2v-6a2 2 0 0 0-2-2zm-5 6H8V6h6v5zm5 4h-1v-4h1v4z"/></svg>
+        </span>
+      </div>
+      <h2>SPBU 74-962-29</h2>
+      <p>Sistem Operasional BBM</p>
+    </div>
+
+    <form id="loginForm" onsubmit="handleLogin(event)">
+      <div class="form-group-clean" style="margin-bottom: 18px;">
+        <label class="form-label-clean" for="username">Username</label>
+        <input type="text" id="username" class="input-clean" required placeholder="Masukkan username" autocomplete="username">
+      </div>
+
+      <div class="form-group-clean" style="margin-bottom: 24px;">
+        <label class="form-label-clean" for="password">Password</label>
+        <div class="password-wrapper">
+          <input type="password" id="password" class="input-clean" required placeholder="Masukkan password" autocomplete="current-password">
+          <button type="button" class="password-toggle" id="pwdToggle" onclick="togglePassword()">Lihat</button>
+        </div>
+      </div>
+
+      <button type="submit" class="btn-primary" style="width: 100%;" id="submitBtn">
+        Masuk ke Sistem
+      </button>
+    </form>
+  </div>
+
+  <div class="toast-container" id="toastContainer"></div>
+
+  <script>
+    // Cek jika sudah login
+    const existingToken = localStorage.getItem('bbm_token');
+    if (existingToken) {
+      window.location.href = '/index.html';
+    }
+
+    function togglePassword() {
+      const pwdInput = document.getElementById('password');
+      const toggle = document.getElementById('pwdToggle');
+      if (pwdInput.type === 'password') {
+        pwdInput.type = 'text';
+        toggle.textContent = 'Sembunyi';
+      } else {
+        pwdInput.type = 'password';
+        toggle.textContent = 'Lihat';
+      }
+    }
+
+    function showToast(message, type = 'info') {
+      const container = document.getElementById('toastContainer');
+      const toast = document.createElement('div');
+      toast.className = `toast ${type}`;
+      toast.textContent = message;
+      container.appendChild(toast);
+      setTimeout(() => { toast.remove(); }, 3500);
+    }
+
+    async function handleLogin(e) {
+      e.preventDefault();
+      const submitBtn = document.getElementById('submitBtn');
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Memverifikasi...';
+
+      const username = document.getElementById('username').value.trim();
+      const password = document.getElementById('password').value;
+
+      try {
+        const response = await fetch('/api/auth/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ username, password })
+        });
+
+        const data = await response.json();
+        if (data.success) {
+          localStorage.setItem('bbm_token', data.token);
+          localStorage.setItem('bbm_user', JSON.stringify(data.user));
+          showToast('Login berhasil! Mengalihkan...', 'success');
+          setTimeout(() => {
+            window.location.href = '/index.html';
+          }, 500);
+        } else {
+          showToast(data.message || 'Login gagal', 'error');
+          submitBtn.disabled = false;
+          submitBtn.textContent = 'Masuk ke Sistem';
+        }
+      } catch (err) {
+        showToast('Gagal menghubungi server. Periksa koneksi internet Anda.', 'error');
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Masuk ke Sistem';
+      }
+    }
+  </script>
+</body>
+</html>
