@@ -66,11 +66,14 @@ function doPost(e) {
       var sheetTx = getOrCreateBbmSheet(ss);
       var driveResult = null;
 
-      // 1. Simpan foto struk ke Google Drive (Hierarki: PT. Awet Sarana Sukses / Tahun / Bulan / Tanggal)
+      // Cek apakah transaksi sudah memiliki URL Google Drive (mencegah duplikasi file)
+      var existingDriveUrl = payload.data.receipt_photo_url && String(payload.data.receipt_photo_url).indexOf("drive.google.com") !== -1;
+
+      // 1. Simpan foto struk ke Google Drive akun Anda (Hierarki: PT. Awet Sarana Sukses / Tahun / Bulan / Tanggal)
       var base64Data = payload.data.receipt_photo_base64 || 
         (payload.data.receipt_photo_url && String(payload.data.receipt_photo_url).startsWith("data:") ? payload.data.receipt_photo_url : null);
 
-      if (base64Data) {
+      if (!existingDriveUrl && base64Data) {
         driveResult = saveReceiptPhotoToDrive(
           base64Data,
           payload.data.plate_no,
@@ -83,7 +86,7 @@ function doPost(e) {
         }
       }
 
-      // 2. Catat ke Spreadsheet
+      // 2. Catat ke Spreadsheet (Hanya mencatat link Google Drive di Kolom P, BUKAN foto biner)
       appendBbmTransactionRow(sheetTx, payload.data);
 
       return respondJson({
@@ -692,29 +695,85 @@ function updateBbmSettlement(sheetTx, sheetStl, settlementData) {
 }
 
 // ==============================================================================
-// 7. HELPER: PARSER TANGGAL, BULAN, TAHUN & WAKTU INDONESIA
+// 7. HELPER: PARSER TANGGAL, BULAN, TAHUN & WAKTU INDONESIA (WITA - GMT+8)
 // ==============================================================================
 
 function parseDateDetails(dateInput) {
   var d = new Date();
+  
   if (dateInput) {
+    if (typeof dateInput === "string") {
+      // 1. Coba regex untuk format "YYYY-MM-DD HH:mm(:ss)? (WITA)?"
+      var mIso = dateInput.match(/^(\d{4})[/-](\d{1,2})[/-](\d{1,2})(?:[T\s](\d{1,2})[:.](\d{1,2})(?:[:.](\d{1,2}))?)?/);
+      if (mIso) {
+        var y = parseInt(mIso[1], 10);
+        var mo = parseInt(mIso[2], 10) - 1;
+        var dayNum = parseInt(mIso[3], 10);
+        var h = mIso[4] !== undefined ? parseInt(mIso[4], 10) : 0;
+        var mi = mIso[5] !== undefined ? parseInt(mIso[5], 10) : 0;
+
+        var monthName = BULAN_INDO[mo] || "Bulan";
+        var hoursStr = String(h).padStart(2, '0');
+        var minStr = String(mi).padStart(2, '0');
+        var dayStr = String(dayNum).padStart(2, '0');
+
+        return {
+          tanggal: dayStr + "/" + String(mo + 1).padStart(2, '0') + "/" + y,
+          bulan: monthName,
+          tahun: String(y),
+          waktuWita: hoursStr + ":" + minStr + " WITA",
+          dateFormatted: dayNum + " " + monthName + " " + y,
+          timeFormatted: hoursStr + "." + minStr
+        };
+      }
+
+      // 2. Coba regex untuk format "DD/MM/YYYY HH:mm"
+      var mId = dateInput.match(/^(\d{1,2})[/-](\d{1,2})[/-](\d{4})(?:[T\s](\d{1,2})[:.](\d{1,2}))?/);
+      if (mId) {
+        var dayNum = parseInt(mId[1], 10);
+        var mo = parseInt(mId[2], 10) - 1;
+        var y = parseInt(mId[3], 10);
+        var h = mId[4] !== undefined ? parseInt(mId[4], 10) : 0;
+        var mi = mId[5] !== undefined ? parseInt(mId[5], 10) : 0;
+
+        var monthName = BULAN_INDO[mo] || "Bulan";
+        var hoursStr = String(h).padStart(2, '0');
+        var minStr = String(mi).padStart(2, '0');
+        var dayStr = String(dayNum).padStart(2, '0');
+
+        return {
+          tanggal: dayStr + "/" + String(mo + 1).padStart(2, '0') + "/" + y,
+          bulan: monthName,
+          tahun: String(y),
+          waktuWita: hoursStr + ":" + minStr + " WITA",
+          dateFormatted: dayNum + " " + monthName + " " + y,
+          timeFormatted: hoursStr + "." + minStr
+        };
+      }
+    }
+
     var parsed = new Date(dateInput);
     if (!isNaN(parsed.getTime())) {
       d = parsed;
     }
   }
 
-  var day = String(d.getDate()).padStart(2, '0');
-  var monthNum = d.getMonth();
-  var year = d.getFullYear();
-  var hours = String(d.getHours()).padStart(2, '0');
-  var minutes = String(d.getMinutes()).padStart(2, '0');
+  // Gunakan format WITA (GMT+08:00) agar tidak terpengaruh default timezone server Google
+  var yearStr = Utilities.formatDate(d, "GMT+08:00", "yyyy");
+  var monthIndex = parseInt(Utilities.formatDate(d, "GMT+08:00", "M"), 10) - 1;
+  var monthName = BULAN_INDO[monthIndex] || "Bulan";
+  var dayStr = Utilities.formatDate(d, "GMT+08:00", "dd");
+  var dayNum = parseInt(dayStr, 10);
+  var hoursStr = Utilities.formatDate(d, "GMT+08:00", "HH");
+  var minStr = Utilities.formatDate(d, "GMT+08:00", "mm");
 
   return {
-    tanggal: day + "/" + String(monthNum + 1).padStart(2, '0') + "/" + year,
-    bulan: BULAN_INDO[monthNum],
-    tahun: year,
-    waktuWita: hours + ":" + minutes + " WITA"
+    tanggal: dayStr + "/" + String(monthIndex + 1).padStart(2, '0') + "/" + yearStr,
+    bulan: monthName,
+    tahun: yearStr,
+    waktuWita: hoursStr + ":" + minStr + " WITA",
+    dateFormatted: dayNum + " " + monthName + " " + yearStr,
+    timeFormatted: hoursStr + "." + minStr
   };
 }
 
@@ -778,25 +837,12 @@ function saveReceiptPhotoToDrive(photoBase64, plateNo, dateInput, transactionNo)
       else if (mimeType.indexOf("webp") !== -1) ext = "webp";
     }
 
-    // 2. Parse Tanggal & Jam Transaksi Terurai
-    var d = new Date();
-    if (dateInput) {
-      var parsed = new Date(dateInput);
-      if (!isNaN(parsed.getTime())) {
-        d = parsed;
-      }
-    }
-
-    var day = d.getDate();
-    var monthName = BULAN_INDO[d.getMonth()] || "Bulan";
-    var year = d.getFullYear();
-    var hours = String(d.getHours()).padStart(2, '0');
-    var minutes = String(d.getMinutes()).padStart(2, '0');
-
-    var yearStr = String(year);
-    var monthStr = monthName;
-    var dateStr = day + " " + monthName + " " + year; // Contoh: "15 September 2026"
-    var timeFormatted = hours + "." + minutes;         // Format tanda titik: "14.00"
+    // 2. Parse Tanggal & Jam Transaksi Terurai (Format WITA GMT+8)
+    var dateInfo = parseDateDetails(dateInput);
+    var yearStr = dateInfo.tahun;
+    var monthStr = dateInfo.bulan;
+    var dateStr = dateInfo.dateFormatted; // Contoh: "15 September 2026"
+    var timeFormatted = dateInfo.timeFormatted; // Format jam titik: "14.00"
 
     // 3. Format Nama File: [Plat Mobil] - [Tanggal Transaksi] (contoh: DM 1455 JG - 15 September 2026 14.00.jpg)
     var cleanPlate = (plateNo || "KENDARAAN").trim().toUpperCase();
@@ -805,8 +851,8 @@ function saveReceiptPhotoToDrive(photoBase64, plateNo, dateInput, transactionNo)
     // Bersihkan karakter terlarang filesystem jika ada
     fileName = fileName.replace(/[/\\?%*:|"<>]/g, '-');
 
-    // 4. Buat / Cari Hierarki Folder di Google Drive
-    // Level 1: Root Folder "PT. Awet Sarana Sukses"
+    // 4. Buat / Cari Hierarki Folder di Google Drive Pengguna ("Google Drive-ku")
+    // Level 1: Root Folder "PT. Awet Sarana Sukses" di My Drive
     var rootFolder = getOrCreateDriveFolder(DriveApp.getRootFolder(), GDRIVE_ROOT_FOLDER_NAME);
     // Level 2: Folder Tahun (misal: 2026)
     var yearFolder = getOrCreateDriveFolder(rootFolder, yearStr);
@@ -815,10 +861,16 @@ function saveReceiptPhotoToDrive(photoBase64, plateNo, dateInput, transactionNo)
     // Level 4: Folder Tanggal (misal: 15 September 2026)
     var targetFolder = getOrCreateDriveFolder(monthFolder, dateStr);
 
-    // 5. Simpan File Struk ke Folder Target
-    var decodedBytes = Utilities.base64Decode(base64Data);
-    var blob = Utilities.newBlob(decodedBytes, mimeType, fileName);
-    var driveFile = targetFolder.createFile(blob);
+    // 5. Simpan / Dapatkan File Struk ke Folder Target (Anti-Duplikasi)
+    var existingFiles = targetFolder.getFilesByName(fileName);
+    var driveFile;
+    if (existingFiles.hasNext()) {
+      driveFile = existingFiles.next();
+    } else {
+      var decodedBytes = Utilities.base64Decode(base64Data);
+      var blob = Utilities.newBlob(decodedBytes, mimeType, fileName);
+      driveFile = targetFolder.createFile(blob);
+    }
 
     // 6. Atur Hak Akses agar dapat dibuka langsung dari Spreadsheet & Web App
     try {

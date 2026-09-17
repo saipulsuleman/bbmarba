@@ -60,9 +60,9 @@ Setelah Anda me-refresh halaman spreadsheet, akan muncul menu baru di bilah menu
 ---
 
 ### 📂 Penyimpanan Otomatis Foto Struk ke Google Drive (PT. Awet Sarana Sukses)
-Setiap transaksi pengisian BBM yang melampirkan foto struk fisik dispenser akan otomatis disimpan langsung ke Google Drive akun Anda dengan struktur folder berjenjang yang rapi:
+Setiap transaksi pengisian BBM yang melampirkan foto struk fisik dispenser akan otomatis disimpan langsung ke **Google Drive akun Anda** dengan struktur folder berjenjang yang rapi:
 ```
-Google Drive (My Drive)
+Google Drive (My Drive Akun Anda)
 └── PT. Awet Sarana Sukses/
     └── 2026/
         └── September/
@@ -70,6 +70,8 @@ Google Drive (My Drive)
                 └── DM 1455 JG - 15 September 2026 14.00.jpg
 ```
 * **Format Nama File**: `[Nomor Plat] - [Tanggal Transaksi 14.00].jpg` (Contoh: `DM 1455 JG - 15 September 2026 14.00.jpg`).
-* **Kolom P di Google Sheets**: Otomatis berisi link formula `=HYPERLINK("https://drive.google.com/..."; "Lihat Struk")`. Siapa pun yang membuka spreadsheet dapat langsung mengklik untuk melihat foto struk asli dispenser.
-* **Izin Akses Apps Script**: Saat memperbarui penerapan (*New Deployment / Manage Deployment*), jika Google meminta izin tambahan (*Google Drive permissions*), cukup klik **Review Permissions** -> **Allow (Izinkan)** agar Apps Script dapat membuat folder dan menyimpan file struk.
+* **Pemisahan Peran**: **Spreadsheet TIDAK menyimpan gambar secara fisik** (*zero in-cell images*) agar spreadsheet tetap super cepat dan tidak membengkak. Tugas spreadsheet hanya mengambil link formula `=HYPERLINK("https://drive.google.com/..."; "Lihat Struk")` di **Kolom P**.
+* **Kepemilikan Penuh (Google Drive Anda)**: Karena pada Langkah 3 Anda memilih **Execute as: Me (Saya)**, semua file fisik struk tersimpan aman di kuota Google Drive akun Anda sendiri.
+* **Izin Akses Apps Script**: Saat memperbarui penerapan (*New Deployment* atau *Manage Deployment*), jika Google meminta izin otorisasi (*Google Drive permissions*), cukup klik **Review Permissions** -> **Allow (Izinkan)** agar Apps Script dapat membuat hierarki folder dan menyimpan file struk.
+
 

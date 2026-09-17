@@ -674,6 +674,31 @@ let currentTxSearchQuery = '';
 let currentTxStatusFilter = 'BELUM DIBAYAR';
 let currentTxArmadaFilter = '';
 
+function formatWitaTime(dateInput) {
+  if (!dateInput) return '-';
+  const str = String(dateInput).trim();
+  if (str.endsWith(' WITA')) return str;
+  try {
+    const d = new Date(str);
+    if (isNaN(d.getTime())) return str;
+    const options = {
+      timeZone: 'Asia/Makassar',
+      hour12: false,
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
+      hour: '2-digit',
+      minute: '2-digit',
+      second: '2-digit'
+    };
+    const parts = new Intl.DateTimeFormat('id-ID', options).formatToParts(d);
+    const getPart = (type) => parts.find(p => p.type === type)?.value || '';
+    return `${getPart('year')}-${getPart('month')}-${getPart('day')} ${getPart('hour')}:${getPart('minute')}:${getPart('second')} WITA`;
+  } catch (e) {
+    return str;
+  }
+}
+
 async function loadTransactions() {
   try {
     const res = await fetchWithAuth('/api/transactions');
@@ -713,30 +738,38 @@ function resetTxFilters() {
 }
 
 function applyTxFilters() {
+  const statusEl = document.getElementById('filterStatus');
+  const armadaEl = document.getElementById('filterArmada');
+  const searchEl = document.getElementById('txSearchInput');
+
+  const statusFilter = statusEl ? statusEl.value : currentTxStatusFilter;
+  const armadaFilter = armadaEl ? armadaEl.value : currentTxArmadaFilter;
+  const searchQuery = searchEl ? searchEl.value.trim().toLowerCase() : currentTxSearchQuery;
+
   let filtered = [...allTransactions];
 
-  if (currentTxStatusFilter) {
-    filtered = filtered.filter(t => t.payment_status === currentTxStatusFilter);
+  if (statusFilter) {
+    filtered = filtered.filter(t => t.payment_status === statusFilter);
   }
 
-  if (currentTxArmadaFilter === 'REGISTERED') {
+  if (armadaFilter === 'REGISTERED') {
     filtered = filtered.filter(t => t.is_registered !== false);
-  } else if (currentTxArmadaFilter === 'UNREGISTERED') {
+  } else if (armadaFilter === 'UNREGISTERED') {
     filtered = filtered.filter(t => t.is_registered === false);
   }
 
-  if (currentTxSearchQuery) {
+  if (searchQuery) {
     filtered = filtered.filter(t => {
       const p = (t.plate_no || '').toLowerCase();
       const no = (t.transaction_no || '').toLowerCase();
       const r = (t.receipt_no || '').toLowerCase();
       const d = (t.driver_name || '').toLowerCase();
       const eq = (t.equipment_code || '').toLowerCase();
-      return p.includes(currentTxSearchQuery) || 
-             no.includes(currentTxSearchQuery) || 
-             r.includes(currentTxSearchQuery) || 
-             d.includes(currentTxSearchQuery) || 
-             eq.includes(currentTxSearchQuery);
+      return p.includes(searchQuery) || 
+             no.includes(searchQuery) || 
+             r.includes(searchQuery) || 
+             d.includes(searchQuery) || 
+             eq.includes(searchQuery);
     });
   }
 
@@ -810,7 +843,7 @@ function renderTransactionTable(transactions) {
     return `
       <tr style="${strikeStyle}">
         <td class="font-mono" style="font-weight: 700; color: #f8fafc;">${tx.transaction_no}</td>
-        <td style="font-size: 0.82rem; color: #94a3b8;">${tx.filling_time_wita || '-'}</td>
+        <td style="font-size: 0.82rem; color: #94a3b8;">${formatWitaTime(tx.filling_time_wita || tx.created_at)}</td>
         <td class="font-mono" style="font-weight: 700; color: ${plateColor};">${tx.plate_no}${unregBadge}</td>
         <td class="font-mono">${tx.equipment_code || '-'}</td>
         <td class="font-mono" style="font-weight: 700; color: #f8fafc;">Rp ${Number(tx.total_rp).toLocaleString('id-ID')}</td>
@@ -897,7 +930,7 @@ function openTransactionDetail(txId) {
       </div>
       <div class="tx-detail-item">
         <div class="tx-detail-label">Waktu Pengisian (WITA)</div>
-        <div class="tx-detail-val">${tx.filling_time_wita || '-'}</div>
+        <div class="tx-detail-val">${formatWitaTime(tx.filling_time_wita || tx.created_at)}</div>
       </div>
       <div class="tx-detail-item">
         <div class="tx-detail-label">Nomor Plat Kendaraan</div>
@@ -1085,7 +1118,7 @@ function openThermalReceipt(txId) {
     </div>
     <div class="thermal-row">
       <span>Waktu (WITA):</span>
-      <span>${tx.filling_time_wita || nowStr}</span>
+      <span>${formatWitaTime(tx.filling_time_wita || tx.created_at)}</span>
     </div>
     <div class="thermal-row">
       <span>Nomor Plat:</span>
@@ -1192,7 +1225,7 @@ async function loadUnpaidForSettlement() {
             <input type="checkbox" class="settlement-checkbox" value="${tx.id}" data-amount="${tx.total_rp}" onchange="handleSettlementCheckboxChange()">
             <div>
               <div style="font-weight: 700; font-size: 0.88rem; color: #fff;">${tx.plate_no} <span style="font-weight: 400; color: #38bdf8;">(${tx.equipment_code})</span></div>
-              <div style="font-size: 0.75rem; color: var(--text-muted);">${tx.transaction_no} • ${tx.filling_time_wita}</div>
+              <div style="font-size: 0.75rem; color: var(--text-muted);">${tx.transaction_no} • ${formatWitaTime(tx.filling_time_wita || tx.created_at)}</div>
             </div>
           </div>
           <div class="font-mono" style="font-weight: 700; color: #fbbf24;">
